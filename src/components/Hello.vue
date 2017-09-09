@@ -7,7 +7,7 @@
 
 <script>
 import GoogleMapsLoader from 'google-maps'
-GoogleMapsLoader.KEY = 'AIzaSyA-i1a4LSmgEqupl1dCUbi8Z9ObWMQym24'
+// GoogleMapsLoader.KEY = 'AIzaSyA-i1a4LSmgEqupl1dCUbi8Z9ObWMQym24'
 GoogleMapsLoader.LIBRARIES = ['geometry', 'places']
 
 const shuffle = (array) => {
@@ -25,11 +25,13 @@ const shuffle = (array) => {
   return newArray
 }
 
+// keyword
+
 export default {
   name: 'hello',
   data () {
     return {
-      msg: '請開啟地理資訊'
+      msg: 'Please open GPS.'
     }
   },
   mounted: function () {
@@ -46,6 +48,7 @@ export default {
         const service = new google.maps.places.PlacesService(map)
         service.nearbySearch({
           location,
+          openNow: true,
           radius: 500,
           type: ['restaurant']
         }, (resp) => {
@@ -56,9 +59,13 @@ export default {
   },
   methods: {
     updateRestaurant (restaurants) {
-      const shuffled = shuffle(restaurants)
-      this.msg = shuffled[0].name
       console.log(restaurants)
+      if (restaurants.length) {
+        const shuffled = shuffle(restaurants)
+        this.msg = shuffled[0].name
+      } else {
+        this.msg = 'not found'
+      }
     }
   }
 }
