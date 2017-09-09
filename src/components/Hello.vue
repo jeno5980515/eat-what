@@ -17,15 +17,23 @@ export default {
     }
   },
   mounted: function () {
-    const map = this.$refs.map
-    GoogleMapsLoader.load(function (google) {
-      const service = new google.maps.places.PlacesService(map)
-      service.nearbySearch({
-        location: {lat: -33.867, lng: 151.195},
-        radius: 500,
-        type: ['store']
-      }, (resp) => {
-        console.log(resp)
+    let location = {}
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords
+      location = {
+        lat: latitude,
+        lng: longitude
+      }
+      const map = this.$refs.map
+      GoogleMapsLoader.load(function (google) {
+        const service = new google.maps.places.PlacesService(map)
+        service.nearbySearch({
+          location,
+          radius: 500,
+          type: ['store']
+        }, (resp) => {
+          console.log(resp)
+        })
       })
     })
   }
