@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <div>{{msg}}</div>
     <div ref="map"></div>
   </div>
 </template>
@@ -9,11 +10,26 @@ import GoogleMapsLoader from 'google-maps'
 GoogleMapsLoader.KEY = 'AIzaSyA-i1a4LSmgEqupl1dCUbi8Z9ObWMQym24'
 GoogleMapsLoader.LIBRARIES = ['geometry', 'places']
 
+const shuffle = (array) => {
+  let newArray = array.slice()
+  let currentIndex = newArray.length
+  let temporaryValue
+  let randomIndex
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex)
+    currentIndex -= 1
+    temporaryValue = newArray[currentIndex]
+    newArray[currentIndex] = newArray[randomIndex]
+    newArray[randomIndex] = temporaryValue
+  }
+  return newArray
+}
+
 export default {
   name: 'hello',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: '請開啟地理資訊'
     }
   },
   mounted: function () {
@@ -25,17 +41,25 @@ export default {
         lng: longitude
       }
       const map = this.$refs.map
+      const updateRestaurant = this.updateRestaurant
       GoogleMapsLoader.load(function (google) {
         const service = new google.maps.places.PlacesService(map)
         service.nearbySearch({
           location,
           radius: 500,
-          type: ['store']
+          type: ['restaurant']
         }, (resp) => {
-          console.log(resp)
+          updateRestaurant(resp)
         })
       })
     })
+  },
+  methods: {
+    updateRestaurant (restaurants) {
+      const shuffled = shuffle(restaurants)
+      this.msg = shuffled[0].name
+      console.log(restaurants)
+    }
   }
 }
 </script>
